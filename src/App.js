@@ -1,26 +1,53 @@
 import React from 'react';
-import logo from './logo.svg';
+
+import { Login } from './login';
+import { Home } from './home';
+
 import './App.css';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends React.Component {
+  state = {
+    isLoggedIn: false
+  };
+
+  onLogin = (isLoggedIn) => {
+    this.setState({
+      isLoggedIn: isLoggedIn
+    })
+  }
+
+  render() {
+    return (
+      <div className="App">
+        <LoginContext.Provider value={this.state.isLoggedIn}>
+        {
+          this.state.isLoggedIn === false &&
+          <Login onLogin={this.onLogin} />
+        }
+        {
+          this.state.isLoggedIn === true &&
+          <Home />
+        }
+        </LoginContext.Provider>
+      </div>
+    );
+  }
 }
 
 export default App;
+
+
+
+const LoginContext = React.createContext(false);
+
+
+
+export function IsLoggedIn(props) {
+  return (
+    <LoginContext.Consumer>
+      {
+        (isLoggedIn) => isLoggedIn && props.children
+      }
+    </LoginContext.Consumer>
+  )
+}
